@@ -1,0 +1,12 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"name": "Human_Recognition",
+			"path": "../Human_Recognition"
+		}
+	],
+	"settings": {}
+}
