@@ -1,6 +1,8 @@
 # To use Inference Engine backend, specify location of plugins:
 # export LD_LIBRARY_PATH=/opt/intel/deeplearning_deploymenttoolkit/deployment_tools/external/mklml_lnx/lib:$LD_LIBRARY_PATH
 import cv2 as cv
+from cv2 import FastFeatureDetector
+from pydoc import classname
 import numpy as np
 import argparse
 from realsense_depth import *
@@ -63,6 +65,9 @@ while cv.waitKey(1) < 0:
         # Add a point if it's confidence is higher than threshold.
         points.append((int(x), int(y)) if conf > args.thr else None)
 
+        first = True 
+        distance = 0
+
     for pair in POSE_PAIRS:
         partFrom = pair[0]
         partTo = pair[1]
@@ -73,6 +78,11 @@ while cv.waitKey(1) < 0:
         idTo = BODY_PARTS[partTo]
 
         if points[idFrom] and points[idTo]:
+            if first:
+                first = False
+                distance = depth_frame[points[idFrom][1], points[idFrom][0]]
+                cv.putText(frame, "{}mm".format(distance), (point[0], point[1] - 20), cv.FONT_HERSHEY_PLAIN, 2, (0, 0, 0), 2)
+
             cv.line(frame, points[idFrom], points[idTo], (0, 255, 0), 3)
             cv.ellipse(frame, points[idFrom], (3, 3), 0, 0, 360, (0, 0, 255), cv.FILLED)
             cv.ellipse(frame, points[idTo], (3, 3), 0, 0, 360, (0, 0, 255), cv.FILLED)
