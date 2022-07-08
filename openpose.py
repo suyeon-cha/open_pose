@@ -81,7 +81,7 @@ while cv.waitKey(1) < 0:
             if first:
                 first = False
                 distance = depth_frame[points[idFrom][1], points[idFrom][0]]
-                cv.putText(frame, "{}mm".format(distance), (point[0], point[1] - 20), cv.FONT_HERSHEY_PLAIN, 2, (0, 0, 0), 2)
+                cv.putText(frame, "{}mm".format(distance), (500, 50), cv.FONT_HERSHEY_PLAIN, 2, (180, 105, 255), 2)
 
             cv.line(frame, points[idFrom], points[idTo], (0, 255, 0), 3)
             cv.ellipse(frame, points[idFrom], (3, 3), 0, 0, 360, (0, 0, 255), cv.FILLED)
