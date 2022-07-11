@@ -4,6 +4,7 @@ import cv2
 import pyrealsense2
 from realsense_depth import *
 
+
 # Opencv DNN
 net = cv2.dnn.readNet("/home/suyeoncha/catkin_ws/src/dnn_model/yolov4-tiny.weights", "/home/suyeoncha/catkin_ws/src/dnn_model/yolov4-tiny.cfg")
 model = cv2.dnn_DetectionModel(net)
