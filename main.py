@@ -9,6 +9,9 @@ from realsense_depth import *
 from dis import dis
 import pyrealsense2
 import kalman
+import numpy as np
+import matplotlib.pyplot as plt
+
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--input', help='Path to image or video. Skip to capture frames from camera')
@@ -105,7 +108,7 @@ while cv.waitKey(1) < 0:
                 distance = depth_frame[points[idFrom][1], points[idFrom][0]]
 
                 pose_distance.append(distance)
-                error_est, prev_est = kalman.kalman_filter(error_est, prev_est, distance)
+                error_est, prev_est = kalman.kalman_filter(kalman, error_est, prev_est, distance)
                 pose_filtered.append(prev_est)
 
                 print("distance: ", pose_distance)
@@ -138,3 +141,5 @@ while cv.waitKey(1) < 0:
     cv.putText(frame, '%.2fms' % (t / freq), (10, 20), cv.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0))
 
     cv.imshow('OpenPose using OpenCV', frame)
+
+print("hey")
