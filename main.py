@@ -8,6 +8,7 @@ import argparse
 from realsense_depth import *
 from dis import dis
 import pyrealsense2
+import kalman
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--input', help='Path to image or video. Skip to capture frames from camera')
@@ -52,6 +53,10 @@ print(classes)
 dc = DepthCamera()
 # cap = cv.VideoCapture(args.input if args.input else 0)
 
+error_est, prev_est = 0, 600
+pose_distance = []
+pose_filtered = []
+
 while cv.waitKey(1) < 0:
     #hasFrame, frame = cap.read()
     ret, depth_frame, frame = dc.get_frame()
@@ -69,6 +74,7 @@ while cv.waitKey(1) < 0:
     assert(len(BODY_PARTS) == out.shape[1])
 
     points = []
+
     for i in range(len(BODY_PARTS)):
         # Slice heatmap of corresponging body's part.
         heatMap = out[0, i, :, :]
@@ -97,6 +103,14 @@ while cv.waitKey(1) < 0:
             if first:
                 first = False
                 distance = depth_frame[points[idFrom][1], points[idFrom][0]]
+
+                pose_distance.append(distance)
+                error_est, prev_est = kalman.kalman_filter(error_est, prev_est, distance)
+                pose_filtered.append(prev_est)
+
+                print("distance: ", pose_distance)
+                print("filtered: ", pose_filtered)
+
                 cv.putText(frame, "{}mm".format(distance), (500, 50), cv.FONT_HERSHEY_PLAIN, 2, (180, 105, 255), 2)
 
             cv.line(frame, points[idFrom], points[idTo], (0, 255, 0), 3)
@@ -111,6 +125,7 @@ while cv.waitKey(1) < 0:
         # Set point to the center of bbox
         point = ((int)((x+w)/2), (int)((y+h)/2))
         distance = depth_frame[point[1], point[0]]
+
 
         class_name = classes[class_id]
         
